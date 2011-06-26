@@ -20,23 +20,29 @@ def push(text, content_type,link):
 
 
 def fetch_data():
-    web = urllib.urlopen("http://www.universityofcalicut.info/index2.php?option=com_content&task=view&id=744&pop=1&page=0&Itemid=324")
-    #web = urllib.urlopen("Notification.html")
+    #web = urllib.urlopen("http://www.universityofcalicut.info/index2.php?option=com_content&task=view&id=744&pop=1&page=0&Itemid=324")
+    web = urllib.urlopen("Notification.html")
     data = BeautifulSoup(web)
     i = 12
 
-    row = data.findAll("tr")[i].findAll("td")[1].contents[1]
-
-    #print row, "\n"
-    print row.findAll("a"), "\n"
-    link = row.findAll("a")[0]['href']
-
-    text = row.renderContents()
-    text = re.sub(r"<[^>]+>","", text)
-
-    #print text
-    #print link
-    i = i+2
-    push(text,"1",link)
+    while 1:
+        print "--------------------------------------------------------"
+        row = data.findAll("tr")[i].findAll("td")
+        for rows in row:
+            try:
+                link = rows.findAll("a")[0]['href']
+                print "+++++++++++++++++++++++"
+                print link
+            except:
+                continue
+            text = rows.renderContents()
+            text = re.sub(r"<[^>]+>","", text)
+            text = re.sub(r"&nbsp;","", text)
+            text = re.sub(r"&amp;","&",text)
+            
+            #print link
+            print text
+        i = i+2
+    #push(text,"1",link)
 
 fetch_data()
