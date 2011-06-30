@@ -5,7 +5,12 @@ import MySQLdb
 import cPickle as Pickle
 import os
 
+# File to store site data
 PICKLE_FILE = "lastupdate.p"
+
+# Number of entries to check whether the site is updated or not.
+# More than one needed to avoid problems if one wntry is deleted
+ENTRIES = 2
 
 DBHOST = "localhost"
 DBPASS = "root"
@@ -33,35 +38,42 @@ def pull(query):
     cursor.execute(query)
     return int(cursor.rowcount)
 
-def store():
-    pfile = open(PICKE_FILE, 'wb')
-    pickle.dump(data, pfile)
+def store(data):
+    pfile = open(PICKLE_FILE, 'wb')
+    Pickle.dump(data, pfile)
     pfile.close()
     return
 
 def read_old_data():
+    data = []
     if os.path.isfile(PICKLE_FILE):
-        data = {}
         pfile = open(PICKLE_FILE, 'rb')
-        data = pickle.load(pfile)
+        data = Pickle.load(pfile)
         pfile.close()
-        return data
-    return None
+    return data
+
+def search(link):
+    lastupdate = read_old_data()
+    for i in range(0, ENTRIES):
+        if lastupdate[i]['link'] == link:
+            return True
+    return False
 
 def fetch_data():
-    top = True
-    #web = urllib.urlopen("http://www.universityofcalicut.info/index2.php?option=com_content&task=view&id=744&pop=1&page=0&Itemid=324")
-    web = urllib.urlopen("Notification.html")
+    web = urllib.urlopen("http://www.universityofcalicut.info/index2.php?option=com_content&task=view&id=744&pop=1&page=0&Itemid=324")
+    #web = urllib.urlopen("Notification.html")
     data = BeautifulSoup(web)
     i = 12
+    top = 0
 
-    lastupdate = read_old_data()
+    update = []
 
     while 1:
+        print "--------------------------------------------------------"
         try:
             row = data.findAll("tr")[i].findAll("td")
         except:
-            return
+            break
         for rows in row:
             try:
                 link = rows.findAll("a")[0]['href']
@@ -71,25 +83,34 @@ def fetch_data():
             text = re.sub(r"<[^>]+>","", text)
             text = re.sub(r"&nbsp;","", text)
             text = re.sub(r"&amp;","&",text)
-#        print "--------------------------------------------------------"
-#            print link
-#            print text
 
-            if top:
-                data = {'text' : text, 'link' : link}
-                store(data)
-                top = False
+            #print link
+            #print text
 
-            query = "SELECT (id, content, type, link) FROM post WHERE (content = %s)", % text
-            check = pull(query)
+            if search(link):
+            # Search data found
+            # No new update
+                j = 0
+                while len(update) < ENTRIES:
+                    lastupdate = read_old_data()
+                    update.append(lastupdate[j])
+                    j = j + 1
+                store(update)
+                return
+            else:
+            # Update Found
+                print link
+                print text
+                #New update found
+                if top < ENTRIES:
+                    temp = {'text' : text, 'link' : link}
+                    update.append(temp)
+                    top = top + 1
+                i = i+2
 
-#    if :
-        push(text,"1",link)
-#        break
-#    else:
-#        query = "SELECT (id, content, type, link) FROM post WHERE"
+    
+
 #        send_mail("")
 #        send_sms("")
-        i = i+2
 
 fetch_data()
