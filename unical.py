@@ -85,7 +85,7 @@ def fetch_data():
     web = urllib.urlopen("http://www.universityofcalicut.info/index2.php?option=com_content&task=view&id=744&pop=1&page=0&Itemid=324")
     #web = urllib.urlopen("notification.htm")
     data = BeautifulSoup(web)
-    i = 12
+    i = 10
     top = 0
 
     update = []
@@ -106,9 +106,16 @@ def fetch_data():
             except:
                 continue
             text = column.renderContents()
+
+            # Remove comments
+            text = re.sub(r"<!--(.*?)-->","", text)
+            # Remove HTML tags
             text = re.sub(r"<[^>]+>","", text)
+            # Replace html characters
             text = re.sub(r"&nbsp;","", text)
             text = re.sub(r"&amp;","&",text)
+            # trim
+            text = text.strip()
 
             if search(link):
             # Search data found
