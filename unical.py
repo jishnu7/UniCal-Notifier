@@ -18,7 +18,7 @@
 import urllib
 from BeautifulSoup import BeautifulSoup
 import re
-import MySQLdb
+#import MySQLdb
 import cPickle as Pickle
 import os
 
@@ -26,7 +26,7 @@ import os
 PICKLE_FILE = "lastupdate.p"
 
 # Number of entries to check whether the site is updated or not.
-# More than one needed to avoid problems if one wntry is deleted
+# More than one needed to avoid problems if one entry is deleted
 ENTRIES = 2
 
 DBHOST = "localhost"
@@ -34,13 +34,13 @@ DBPASS = "root"
 DBUSER = "root"
 DB = "test"
 
-db = MySQLdb.connect(host=DBHOST, user=DBUSER, passwd=DBPASS, db=DB)
+#db = MySQLdb.connect(host=DBHOST, user=DBUSER, passwd=DBPASS, db=DB)
 
-def send_sms(msg,number):
-    print msg, number
+#def send_sms(msg,number):
+#    print msg number
 
-def send_mail(msg, email):
-    print msg. email
+#def send_mail(msg, email):
+#    print msg. email
 
 #def push(text, content_type, link):
 #    cursor = db.cursor()
@@ -67,42 +67,48 @@ def read_old_data():
         pfile = open(PICKLE_FILE, 'rb')
         data = Pickle.load(pfile)
         pfile.close()
-    return data
+        return data
+    else:
+        return None
 
 def search(link):
     lastupdate = read_old_data()
-    for i in range(0, ENTRIES):
-        if lastupdate[i]['link'] == link:
-            return True
+    if lastupdate:
+        for i in range(0, ENTRIES):
+            if lastupdate[i]['link'] == link:
+                # No updates
+                return True
+        # Update found
     return False
 
 def fetch_data():
     web = urllib.urlopen("http://www.universityofcalicut.info/index2.php?option=com_content&task=view&id=744&pop=1&page=0&Itemid=324")
-    #web = urllib.urlopen("Notification.html")
+    #web = urllib.urlopen("notification.htm")
     data = BeautifulSoup(web)
     i = 12
     top = 0
 
     update = []
+    new_data = []
 
     while 1:
-        print "--------------------------------------------------------"
+        print "-------------------------------------"
         try:
             row = data.findAll("tr")[i].findAll("td")
+            i = i+2
         except:
+            # reached end
+            store(update)
             break
-        for rows in row:
+        for column in row:
             try:
-                link = rows.findAll("a")[0]['href']
+                link = column.findAll("a")[0]['href']
             except:
                 continue
-            text = rows.renderContents()
+            text = column.renderContents()
             text = re.sub(r"<[^>]+>","", text)
             text = re.sub(r"&nbsp;","", text)
             text = re.sub(r"&amp;","&",text)
-
-            #print link
-            #print text
 
             if search(link):
             # Search data found
@@ -112,20 +118,20 @@ def fetch_data():
                     lastupdate = read_old_data()
                     update.append(lastupdate[j])
                     j = j + 1
+                if(j==2):
+                    print "No new updates"
                 store(update)
                 return
             else:
+            # Search data not found
             # Update Found
                 print link
                 print text
-                #New update found
+                temp = {'text' : text, 'link' : link}
+                new_data.append(temp)
                 if top < ENTRIES:
-                    temp = {'text' : text, 'link' : link}
                     update.append(temp)
                     top = top + 1
-                i = i+2
-
-    
 
 #        send_mail("")
 #        send_sms("")
