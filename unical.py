@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 
 
 #    UniCal Notifier
@@ -25,24 +25,30 @@ import cPickle
 import os
 from twitterbot import Twitter
 
-# File to store site data
-PICKLE_FILE = "lastupdate.p"
-
 # Number of entries to check whether the site is updated or not.
 # More than one needed to avoid problems if one entry is deleted
 ENTRIES = 2
 
+URL = {
+        'Notifications' : 'http://www.universityofcalicut.info/index2.php?option=com_content&task=view&id=744&pop=1&page=0&Itemid=324',
+        #'Timetable' : 'http://www.universityofcalicut.info/index2.php?option=com_content&task=view&id=745&pop=1&page=0&Itemid=325'#,
+        'Results' : 'http://www.universityofcalicut.info/index2.php?option=com_content&task=view&id=792&pop=1&page=0&Itemid=342'
+       }
+
 class Pickle():
+    def __init__(self, filename):
+        self.filename = filename
+
     def pickling(self,data):
-        pfile = open(PICKLE_FILE, 'wb')
+        pfile = open(self.filename, 'wb')
         cPickle.dump(data, pfile)
         pfile.close()
         return
 
     def unpickling(self):
         data = []
-        if os.path.isfile(PICKLE_FILE):
-            pfile = open(PICKLE_FILE, 'rb')
+        if os.path.isfile(self.filename):
+            pfile = open(self.filename, 'rb')
             data = cPickle.load(pfile)
             pfile.close()
             return data
@@ -77,8 +83,8 @@ def search(datas):
             print "found"
 '''
 
-def fetch_data():
-    web = urllib.urlopen("http://www.universityofcalicut.info/index2.php?option=com_content&task=view&id=744&pop=1&page=0&Itemid=324")
+def fetch_data(page, url):
+    web = urllib.urlopen(url)
     data = BeautifulSoup(web)
     i = 10
     top = 0
@@ -86,7 +92,9 @@ def fetch_data():
     update = []
     new_data = []
 
-    pck = Pickle()
+    # File to store site data
+    pickle_file = "lastupdate_"+str(page)+".p"
+    pck = Pickle(pickle_file)
 
     while 1:
         #print "-------------------------------------"
@@ -123,7 +131,7 @@ def fetch_data():
                     update.append(lastupdate[j])
                     j = j + 1
                 if(j==2):
-                    print "No new updates"
+                    print "No new updates on "+page
                 pck.pickling(update)
                 return new_data
             else:
@@ -131,7 +139,7 @@ def fetch_data():
             # Update Found
                 #print link
                 #print text
-                temp = {'text' : text, 'link' : link}
+                temp = {'text' : page+' : '+text, 'link' : link}
                 new_data.append(temp)
                 if top < ENTRIES:
                     update.append(temp)
@@ -151,13 +159,25 @@ def truncate(s):
         end = s.rfind(' ',0,charmax-3)
         return s[0:end] + suffix
 
-updates = fetch_data()
-updates.reverse()
+updates = []
+for page in URL:
+    temp = fetch_data(page, URL[page])
+    temp.reverse()
+    updates.extend(temp)
 
 instance=Twitter()
 
 for item in updates:
-    try:
-        instance.tweet(truncate(item['text'])+" http://universityofcalicut.info"+item['link'])
-    except:
-        continue
+    if item:
+        if str(item['link']).startswith('/'):
+            link = "http://universityofcalicut.info"+item['link']
+        elif str(item['link']).startswith('http://'):
+            link = item['link']
+        else:
+            link = "http://universityofcalicut.info/"+item['link']
+
+        try:
+            instance.tweet(truncate(item['text'])+' '+ link)
+            #print truncate(item['text'])+' '+ link
+        except:
+            continue
