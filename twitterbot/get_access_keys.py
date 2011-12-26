@@ -1,9 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 import tweepy
-
-CONSUMER_KEY    = ' '
-CONSUMER_SECRET = ' '
+from keys import *
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth_url = auth.get_authorization_url()
