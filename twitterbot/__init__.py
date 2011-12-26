@@ -1,13 +1,7 @@
-#!/usr/bin/env python2
-
-# Add your keys here. Use access key generation script to get access permissions on account.
-CONSUMER_KEY    = ' '
-CONSUMER_SECRET = ' '
-ACCESS_KEY      = ' '
-ACCESS_SECRET   = ' '
-
+#!/usr/bin/env python
 
 import tweepy
+from keys import *
 
 class Twitter():
     """ to manage twitter related activities """
@@ -23,5 +17,6 @@ class Twitter():
         self.api.update_status(text)
 
 if __name__ == "__main__":
+    ''' Incase this main thread, send a test tweet '''
     instance=Twitter()
-    instance.tweet("testing again")
+    instance.tweet("testing !!")
