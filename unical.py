@@ -79,6 +79,39 @@ class unical():
             updates.extend(temp)
         return updates
 
+    def link_to_url(self, link):
+        link = str(link)
+        if link.startswith('/'):
+            url = "http://universityofcalicut.info"+link
+        elif link.startswith('http://'):
+            url = link
+        else:
+            url = "http://universityofcalicut.info/"+link
+        return url
+
+    def search(self, datas, terms):
+        ''' 
+            Search for a purticular term 
+            'terms' should be an array of values
+            eg:
+            terms = ['b.tech', 'btech', 'b tech', 'bachelor of technology',
+                    'b.arch', 'barch', 'b arch', 'bachelor of architecture']
+             
+            'datas' is the data ferched by the fetch_data function. Which is also an array of array values.
+        '''
+
+        temp = list()
+        for data in datas:
+            flag = 0
+            for term in terms:
+                # Avoid duplicates
+                if flag == 1:
+                        break
+                if data['text'].lower().find(term) !=-1:
+                    temp.append({'text': data['text'], 'link' : data['link']})
+                    flag = 1
+        return temp
+
     def fetch_data(self, page, url):
         ''' Fetch data from passed link '''
         web = urllib.urlopen(url)
@@ -150,29 +183,6 @@ class unical():
         return new_data
 
 class text():
-    def search(self, datas, terms):
-        ''' 
-            Search for a purticular term 
-            'terms' should be a dictionary of array of values, or an array of array of values
-            eg:
-            terms = {
-                        'b.tech' : ['b.tech', 'btech', 'b tech', 'bachelor of technology'],
-                        'b.arch' : ['b.arch', 'barch', 'b arch', 'bachelor of architecture']
-                    }
-            'datas' is the data ferched by the fetch_data function. Which is also an array of array values.
-        '''
-        for term in terms:
-            temp = list()
-            for subterm in term:
-                for data in datas:
-                    if data['text'].lower().find(subterm) !=-1:
-                        temp.append(data['text'])
-                        # Remove it from data for avoiding duplicates
-                        datas.remove(data)
-            if len(temp) != 0:
-                return temp
-            return None
-
     def truncate(self, s):
         ''' Function to trucate long string in a nicer way '''
         charmax = 120
@@ -194,15 +204,8 @@ if __name__ == "__main__":
 
     for item in updates:
         if item:
-            if str(item['link']).startswith('/'):
-                link = "http://universityofcalicut.info"+item['link']
-            elif str(item['link']).startswith('http://'):
-                link = item['link']
-            else:
-                link = "http://universityofcalicut.info/"+item['link']
-
             try:
-                instance.tweet(txt.truncate(item['text'])+' '+ link)
-                #print txt.truncate(item['text'])+' '+ link
+                #instance.tweet(txt.truncate(item['text'])+' '+ unical.link_to_url(item['link']))
+                print txt.truncate(item['text'])+' '+ unical.link_to_url(item['link'])
             except:
                 continue
