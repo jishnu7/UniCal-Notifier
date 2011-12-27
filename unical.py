@@ -205,7 +205,7 @@ if __name__ == "__main__":
     for item in updates:
         if item:
             try:
-                #instance.tweet(txt.truncate(item['text'])+' '+ unical.link_to_url(item['link']))
-                print txt.truncate(item['text'])+' '+ unical.link_to_url(item['link'])
+                instance.tweet(txt.truncate(item['text'])+' '+ unical.link_to_url(item['link']))
+                #print txt.truncate(item['text'])+' '+ unical.link_to_url(item['link'])
             except:
                 continue
