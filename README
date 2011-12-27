@@ -5,3 +5,4 @@ This program is intented to notify registered members about updates in Universit
 Dependencies
 ------------
 BeautifulSoup - http://www.crummy.com/software/BeautifulSoup/
+tweepy        - http://code.google.com/p/tweepy/
