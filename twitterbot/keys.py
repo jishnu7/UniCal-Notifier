@@ -2,5 +2,5 @@
 CONSUMER_KEY    = ' '
 CONSUMER_SECRET = ' '
 
-ACCESS_KEY      = ' '
-ACCESS_SECRET   = ' '
+ACCESS_KEY      = { 'general' : '', 'btech' : ''}
+ACCESS_SECRET   = { 'general' : '', 'btech' : ''}

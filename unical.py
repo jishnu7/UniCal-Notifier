@@ -199,13 +199,29 @@ class text():
 if __name__ == "__main__":
     unical = unical()
     updates = unical.check_update()
-    instance = Twitter()
+    instance = Twitter('general')
     txt = text()
+
+    #For general unical bot
+    for item in updates:
+        if item:
+            try:
+                instance.tweet(txt.truncate(item['text'])+' '+ unical.link_to_url(item['link']))
+                print txt.truncate(item['text'])+' '+ unical.link_to_url(item['link'])
+            except:
+                continue
+
+    # For unical_btech bot
+    #print "-------------------------------------"
+    instance = Twitter('btech')
+    terms = ['b.tech', 'btech', 'b tech', 'bachelor of technology',
+             'b.arch', 'barch', 'b arch', 'bachelor of architecture']
+    updates = unical.search(updates, terms)
 
     for item in updates:
         if item:
             try:
                 instance.tweet(txt.truncate(item['text'])+' '+ unical.link_to_url(item['link']))
-                #print txt.truncate(item['text'])+' '+ unical.link_to_url(item['link'])
+                print txt.truncate(item['text'])+' '+ unical.link_to_url(item['link'])
             except:
                 continue

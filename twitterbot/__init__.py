@@ -6,10 +6,10 @@ from keys import *
 class Twitter():
     """ to manage twitter related activities """
 
-    def __init__(self):
+    def __init__(self, account):
         # OAuth authentication
         auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-        auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
+        auth.set_access_token(ACCESS_KEY[account], ACCESS_SECRET[account])
         self.api = tweepy.API(auth)
 
     def tweet(self, text):
