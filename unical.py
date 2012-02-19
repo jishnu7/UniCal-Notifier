@@ -70,6 +70,43 @@ class Pickle():
             # Update found
         return False
 
+class database():
+    ''' To manage database operations '''
+    def __init__():
+        ''' Connect and init database '''
+    
+    def fetch():
+        ''' Fetch data from database '''
+        
+    def add():
+        ''' an update to database '''
+
+    def clean():
+        ''' Delete posts older than 30 days '''
+
+class fileoperation():
+    def __init__:
+        cache_file = "cache.pdf"
+
+    def get(link=None):
+        if link != None:
+            urllib.urlretrieve(link,cache_file)
+            return self.gen_hash()
+        return None
+
+    def gen_hash():
+        ''' Generate md5 hash value '''
+        f = file.open(cache_file)
+        # read file in 128 chunks. Good for memory management.
+        while True:
+            data = f.read(128)
+            if not data:
+                break
+            mdg.update(data)
+        return md5.digest()
+
+    def check():
+
 class unical():
     def check_update(self):
         updates = []
