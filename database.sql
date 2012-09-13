@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `Notifications` (
   `link` varchar(200) default NULL,
   `date` timestamp NOT NULL default CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=310 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
 
 
 CREATE TABLE IF NOT EXISTS `Timetable` (
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `Timetable` (
   `link` varchar(200) default NULL,
   `date` timestamp NOT NULL default CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=310 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
 
 CREATE TABLE IF NOT EXISTS `Results` (
   `id` int(11) NOT NULL auto_increment,
@@ -26,4 +26,4 @@ CREATE TABLE IF NOT EXISTS `Results` (
   `link` varchar(200) default NULL,
   `date` timestamp NOT NULL default CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=310 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
