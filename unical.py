@@ -122,7 +122,6 @@ class fileoperation():
 '''
 
 class unical():
-    @newrelic.agent.function_trace()
     def check_update(self):
         updates = []
         for page in URL:
